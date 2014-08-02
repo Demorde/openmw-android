@@ -1,0 +1,227 @@
+# local files
+set(GAME
+SDL_android_main.c
+    main.cpp
+    engine.cpp
+)
+#if(NOT WIN32)
+ #   set(GAME ${GAME} crashcatcher.cpp)
+#endif()
+set(GAME_HEADER
+    engine.hpp
+)
+source_group(game FILES ${GAME} ${GAME_HEADER})
+
+add_openmw_dir (mwrender
+    renderingmanager debugging sky camera animation npcanimation creatureanimation activatoranimation
+    actors objects renderinginterface localmap occlusionquery water shadows
+    characterpreview globalmap videoplayer ripplesimulation refraction
+    terrainstorage renderconst effectmanager weaponanimation terraingrid
+    )
+
+add_openmw_dir (mwinput
+    inputmanagerimp
+    )
+
+add_openmw_dir (mwgui
+    textinput widgets race class birth review windowmanagerimp console dialogue
+    windowbase statswindow messagebox journalwindow charactercreation
+    mapwindow windowpinnablebase tooltips scrollwindow bookwindow list
+    formatting inventorywindow container hud countdialog tradewindow settingswindow
+    confirmationdialog alchemywindow referenceinterface spellwindow mainmenu quickkeysmenu
+    itemselection spellbuyingwindow loadingscreen levelupdialog waitdialog spellcreationdialog
+    enchantingdialog trainingwindow travelwindow imagebutton exposedwindow cursor spellicons
+    merchantrepair repair soulgemdialog companionwindow bookpage journalviewmodel journalbooks
+    keywordsearch itemmodel containeritemmodel inventoryitemmodel sortfilteritemmodel itemview
+    tradeitemmodel companionitemmodel pickpocketitemmodel fontloader controllers savegamedialog
+    recharge mode videowidget backgroundimage itemwidget
+    )
+
+add_openmw_dir (mwdialogue
+    dialoguemanagerimp journalimp journalentry quest topic filter selectwrapper
+    )
+
+add_openmw_dir (mwscript
+    locals scriptmanagerimp compilercontext interpretercontext cellextensions miscextensions
+    guiextensions soundextensions skyextensions statsextensions containerextensions
+    aiextensions controlextensions extensions globalscripts ref dialogueextensions
+    animationextensions transformationextensions consoleextensions userextensions
+    )
+
+add_openmw_dir (mwsound
+    soundmanagerimp openal_output ffmpeg_decoder sound sound_decoder sound_output loudness
+    )
+
+add_openmw_dir (mwworld
+    refdata worldimp physicssystem scene globals class action nullaction actionteleport
+    containerstore actiontalk actiontake manualref player cellfunctors failedaction
+    cells localscripts customdata weather inventorystore ptr actionopen actionread
+    actionequip timestamp actionalchemy cellstore actionapply actioneat
+    esmstore store recordcmp fallback actionrepair actionsoulgem livecellref actiondoor
+    contentloader esmloader omwloader actiontrap cellreflist projectilemanager cellref
+    )
+
+add_openmw_dir (mwclass
+    classes activator creature npc weapon armor potion apparatus book clothing container door
+    ingredient creaturelevlist itemlevlist light lockpick misc probe repair static
+    )
+
+add_openmw_dir (mwmechanics
+    mechanicsmanagerimp stat character creaturestats magiceffects movement actors objects
+    drawstate spells activespells npcstats aipackage aisequence aipursue alchemy aiwander aitravel aifollow aiavoiddoor
+    aiescort aiactivate aicombat repair enchanting pathfinding pathgrid security spellsuccess spellcasting
+    disease pickpocket levelledlist combat steering obstacle autocalcspell difficultyscaling
+    )
+
+add_openmw_dir (mwstate
+    statemanagerimp charactermanager character
+    )
+
+add_openmw_dir (mwbase
+    environment world scriptmanager dialoguemanager journal soundmanager mechanicsmanager
+    inputmanager windowmanager statemanager
+    )
+
+# Main executable
+set(BOOST_COMPONENTS system filesystem program_options thread wave atomic)
+if(WIN32)
+    set(BOOST_COMPONENTS ${BOOST_COMPONENTS} locale)
+endif(WIN32)
+
+find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+
+add_library(main SHARED
+    ${OPENMW_LIBS} ${OPENMW_LIBS_HEADER}
+    ${OPENMW_FILES}
+    ${GAME} ${GAME_HEADER}
+    ${APPLE_BUNDLE_RESOURCES}
+)
+
+# Sound stuff - here so CMake doesn't stupidly recompile EVERYTHING
+# when we change the backend.
+include_directories(${SOUND_INPUT_INCLUDES} ${BULLET_INCLUDE_DIRS})
+
+target_link_libraries(main
+    ${OGRE_LIBRARIES}
+    ${OGRE_STATIC_PLUGINS}
+    ${SHINY_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${OPENAL_LIBRARY}
+    ${SOUND_INPUT_LIBRARY}
+    ${BULLET_LIBRARIES}
+    ${MYGUI_LIBRARIES}
+    ${SDL2_LIBRARY}
+    ${MYGUI_PLATFORM_LIBRARIES}
+    "oics"
+    "sdl4ogre"
+    components
+)
+#target_link_libraries(main
+#hlsl2glsl
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+#)
+target_link_libraries(main
+
+${OGRE_STATIC_PLUGINS}
+#RenderSystem_GLES2Static
+#//Plugin_OctreeSceneManagerStatic
+#//Plugin_ParticleFXStatic
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+)
+
+
+target_link_libraries(main
+EGL
+android
+log
+dl
+
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+)
+target_link_libraries(main
+boost_atomic
+boost_chrono
+boost_date_time
+boost_filesystem
+boost_program_options
+boost_system
+boost_thread
+boost_wave
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+)
+target_link_libraries(main
+FreeImage
+freetype
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+)
+
+target_link_libraries(main
+OgreMainStatic
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+)
+
+target_link_libraries(main
+MyGUI.OgrePlatform
+MyGUIEngineStatic
+Plugin_StrangeButtonStatic
+cpufeatures
+BulletCollision
+BulletDynamics
+LinearMath
+
+#   ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL}   
+ # ${OGRE_Plugin_ParticleFX_LIBRARY_REL}    
+ #${OGRE_RenderSystem_GLES2_LIBRARY_REL}   
+)
+
+
+
+
+if (USE_SYSTEM_TINYXML)
+    target_link_libraries(main ${TINYXML_LIBRARIES})
+endif()
+
+if (NOT UNIX)
+target_link_libraries(main ${SDL2MAIN_LIBRARY})
+endif()
+
+# Fix for not visible pthreads functions for linker with glibc 2.15
+if (UNIX AND NOT APPLE)
+target_link_libraries(main ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
+if(APPLE)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(IOKIT_FRAMEWORK IOKit)
+    target_link_libraries(main ${COCOA_FRAMEWORK} ${IOKIT_FRAMEWORK})
+
+    if (FFMPEG_FOUND)
+        find_library(COREVIDEO_FRAMEWORK CoreVideo)
+        find_library(VDA_FRAMEWORK VideoDecodeAcceleration)
+        target_link_libraries(main ${COREVIDEO_FRAMEWORK} ${VDA_FRAMEWORK})
+    endif()
+endif(APPLE)
+
+if (BUILD_WITH_CODE_COVERAGE)
+  add_definitions (--coverage)
+  target_link_libraries(main gcov)
+endif()
+
+if (MSVC)
+    # Debug version needs increased number of sections beyond 2^16
+    if (CMAKE_CL_64)
+        set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj")
+    endif (CMAKE_CL_64)
+endif (MSVC)
